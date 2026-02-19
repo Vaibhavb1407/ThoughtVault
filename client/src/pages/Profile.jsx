@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import thoughtService from '../services/thoughtService';
 import { FaUser, FaChartPie, FaSave } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
@@ -9,13 +10,33 @@ const Profile = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isEditing, setIsEditing] = useState(false);
+    const [stats, setStats] = useState({ totalThoughts: 0, uniqueTags: 0 });
 
     useEffect(() => {
         if (user) {
             setName(user.name);
             setEmail(user.email);
+            fetchStats();
         }
     }, [user]);
+
+    const fetchStats = async () => {
+        try {
+            const thoughts = await thoughtService.getThoughts(user.token);
+            const uniqueTags = new Set();
+            thoughts.forEach(thought => {
+                if (thought.tags && Array.isArray(thought.tags)) {
+                    thought.tags.forEach(tag => uniqueTags.add(tag.toLowerCase()));
+                }
+            });
+            setStats({
+                totalThoughts: thoughts.length,
+                uniqueTags: uniqueTags.size
+            });
+        } catch (error) {
+            console.error('Error fetching stats:', error);
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -112,11 +133,11 @@ const Profile = () => {
                     <p className="text-gray-500 text-sm">Overview of your thought vault</p>
                     <div className="grid grid-cols-2 gap-4 mt-6">
                         <div className="bg-gray-50 p-4 rounded-xl text-center">
-                            <p className="text-3xl font-bold text-gray-800">0</p>
+                            <p className="text-3xl font-bold text-gray-800">{stats.totalThoughts}</p>
                             <p className="text-xs text-gray-500 mt-1">Total Thoughts</p>
                         </div>
                         <div className="bg-gray-50 p-4 rounded-xl text-center">
-                            <p className="text-3xl font-bold text-gray-800">0</p>
+                            <p className="text-3xl font-bold text-gray-800">{stats.uniqueTags}</p>
                             <p className="text-xs text-gray-500 mt-1">Unique Tags</p>
                         </div>
                     </div>
