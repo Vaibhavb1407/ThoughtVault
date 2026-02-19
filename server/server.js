@@ -17,6 +17,20 @@ app.use(express.urlencoded({ extended: false }));
 app.use('/api/thoughts', require('./routes/thoughts'));
 app.use('/api/auth', require('./routes/auth'));
 
+// Serve frontend
+if (process.env.NODE_ENV === 'production') {
+    const path = require('path');
+    app.use(express.static(path.join(__dirname, '../client/dist')));
+
+    app.get('*', (req, res) =>
+        res.sendFile(
+            path.resolve(__dirname, '../', 'client', 'dist', 'index.html')
+        )
+    );
+} else {
+    app.get('/', (req, res) => res.send('Please set to production'));
+}
+
 app.use(errorHandler);
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
