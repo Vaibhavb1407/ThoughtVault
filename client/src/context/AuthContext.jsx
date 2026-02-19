@@ -19,8 +19,10 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     }, []);
 
+    const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
     const register = async (userData) => {
-        const response = await axios.post('http://localhost:5000/api/auth/register', userData);
+        const response = await axios.post(`${API_URL}/api/auth/register`, userData);
         if (response.data) {
             localStorage.setItem('user', JSON.stringify(response.data));
             setUser(response.data);
@@ -30,7 +32,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     const login = async (userData) => {
-        const response = await axios.post('http://localhost:5000/api/auth/login', userData);
+        const response = await axios.post(`${API_URL}/api/auth/login`, userData);
         if (response.data) {
             localStorage.setItem('user', JSON.stringify(response.data));
             setUser(response.data);
