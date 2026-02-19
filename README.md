@@ -1,6 +1,7 @@
 # ThoughtVault
 
 A full-stack MERN application for managing personal thoughts securely.
+- **Live Demo**: [Start Journaling](https://thoughtvault.onrender.com/)
 
 ## Features
 - **Authentication**: JWT-based signup/login.
