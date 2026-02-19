@@ -47,8 +47,22 @@ export const AuthProvider = ({ children }) => {
         navigate('/login');
     };
 
+    const updateProfile = async (userData) => {
+        const config = {
+            headers: {
+                Authorization: `Bearer ${user.token}`,
+            },
+        };
+        const response = await axios.put('/api/auth/profile', userData, config);
+        if (response.data) {
+            localStorage.setItem('user', JSON.stringify(response.data));
+            setUser(response.data);
+        }
+        return response.data;
+    };
+
     return (
-        <AuthContext.Provider value={{ user, loading, register, login, logout }}>
+        <AuthContext.Provider value={{ user, loading, register, login, logout, updateProfile }}>
             {children}
         </AuthContext.Provider>
     );
